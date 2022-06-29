@@ -1,6 +1,6 @@
 <?php
 include_once('./_common.php');
-//??
+//??d
 $token = strip_tags(trim($_POST['token']));
 $cjax_token = get_session('ss_cjax_poe_info_token');
 set_session('ss_cjax_poe_info_token', '');
