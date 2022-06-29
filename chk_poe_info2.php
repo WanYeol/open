@@ -1,6 +1,23 @@
 <?php
 include_once('./_common.php');
-//??d
+
+/*
+ajax를 이용하여 사용자가 버튼등을 클릭하여 이벤트가 발생 할 경우
+관련정보를 연산하여 다시 사용자 화면에 뿌려줍니다.
+
+여기는 사용자가 입력한 ID, 캐릭터명 등이 사기꾼인지 아닌지 판단합니다.
+*/
+
+
+
+/*
+ajax를 요청할때 토큰을 생성하여
+
+하나는 ajax할때 같이 보내고
+하나는 세션에 저장합니다.
+생성한 토큰과 저장된 토큰이 맞는지 확인
+틀리면 즉시 종료합니다.
+*/
 $token = strip_tags(trim($_POST['token']));
 $cjax_token = get_session('ss_cjax_poe_info_token');
 set_session('ss_cjax_poe_info_token', '');
@@ -8,6 +25,8 @@ if (!($token && $cjax_token == $token)) {
 	exit;
 }
 
+// acc 계정명
+// char 캐릭터명
 $mb_acc = strip_tags(trim($_POST['mb_acc']));
 $mb_char = strip_tags(trim($_POST['mb_char']));
 
@@ -27,6 +46,12 @@ if($mb_char == null || $mb_char == "") {
 	echo json_encode($print);
 	exit;
 }
+
+/*
+게임사 api로 계정명을 넣으면 해당 계정에 있는 캐릭터명을 반환합니다.
+
+그리고 반환된 캐릭터명을 전부 db에 저장 및 사기관련 이력이 있는지 조회합니다.
+*/
 $incode_data = curl("https://www.pathofexile.com/character-window/get-characters?accountName=$mb_acc");
 
 $data_arr = json_decode($incode_data, true);
@@ -78,6 +103,7 @@ if($data_arr['error'] == null){
 	}
 
 }
+
 
 if($is_block == true){
 	$sql = "select * from `v5_member_acc` where `mb_acc` = '$mb_acc'";
